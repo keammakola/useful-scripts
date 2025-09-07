@@ -1,30 +1,31 @@
 #!/bin/bash
 
-#TO RUN THIS SCRIPT RUN IT USING THE FOLLOWING COMMANDS:
+# TO RUN THIS SCRIPT:
 # chmod +x setup_py_project.sh
 # source setup_py_project.sh
 
 # setup_py_project.sh
-# Copy this script to the root of your project folder
-# This script automates the initial setup of a Python project.
-# It checks for Python, creates and activates a virtual environment,
-# upgrades pip, installs project and development dependencies,
-# and sets up pre-commit hooks if configured.
+# Automates Python project setup:
+# - Checks for Python
+# - Creates and activates a virtual environment
+# - Upgrades pip
+# - Installs project and dev dependencies
+# - Sets up pre-commit hooks with a default config if needed
+
 set -e
 
 echo "Starting setup"
 
-# Check if python is installed
+# Check if python3 is installed
 if ! command -v python3 &> /dev/null; then
     echo "Python not installed"
-    exit 1
+    return 1
 fi
 
-# Create virtual environment if not exists
+# Create virtual environment if it doesn't exist
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment"
     python3 -m venv venv
-    sleep 5
 fi
 
 # Activate virtual environment
@@ -33,25 +34,46 @@ source venv/bin/activate
 
 # Upgrade pip
 echo "Updating pip"
-pip install --upgrade pip
+python -m pip install --upgrade pip
 
-# Install dependencies
+# Install project dependencies if requirements.txt exists
 if [ -f "requirements.txt" ]; then
     echo "Installing dependencies"
     pip install -r requirements.txt
+else
+    echo "No requirements.txt found, skipping project dependencies"
 fi
 
-# Install dev dependencies
+# Install dev dependencies if requirements-dev.txt exists
 if [ -f "requirements-dev.txt" ]; then
     echo "Installing dev dependencies"
     pip install -r requirements-dev.txt
+else
+    echo "No requirements-dev.txt found, skipping dev dependencies"
 fi
 
 # Setup pre-commit hooks
-if [ -f ".pre-commit-config.yaml" ]; then
-    echo "Setting up pre-commit hooks"
-    pip install pre-commit
+echo "Setting up pre-commit hooks"
+pip install pre-commit
+
+# Create default pre-commit config if missing
+if [ ! -f ".pre-commit-config.yaml" ]; then
+    echo "Creating default .pre-commit-config.yaml"
+    cat <<EOL > .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-yaml
+EOL
+fi
+
+# Install hooks only if inside a git repo
+if [ -d ".git" ]; then
     pre-commit install
+    echo "Pre-commit hooks installed"
+else
+    echo "Git not initialized, skipping pre-commit installation"
 fi
 
 echo "Setup complete"
