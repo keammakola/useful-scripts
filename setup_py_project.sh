@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#TO RUN THIS SCRIPT RUN IT USING THE FOLLOWING COMMANDS:
+# chmod +x setup_py_project.sh
+# source setup_py_project.sh
+
 # setup_py_project.sh
 # Copy this script to the root of your project folder
 # This script automates the initial setup of a Python project.
