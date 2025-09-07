@@ -65,10 +65,26 @@ repos:
     rev: v4.4.0
     hooks:
       - id: check-yaml
+
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 6.0.0
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.1
+    hooks:
+      - id: bandit
+
+
 EOL
 fi
 
-# Install hooks only if inside a git repo
 if [ -d ".git" ]; then
     pre-commit install
     echo "Pre-commit hooks installed"
