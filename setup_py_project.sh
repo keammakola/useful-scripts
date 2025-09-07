@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# setup_py_project.sh
+# Copy this script to the root of your project folder
+# This script automates the initial setup of a Python project.
+# It checks for Python, creates and activates a virtual environment,
+# upgrades pip, installs project and development dependencies,
+# and sets up pre-commit hooks if configured.
 set -e
 
 echo "Starting setup"
